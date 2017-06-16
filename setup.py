@@ -31,9 +31,7 @@ setup(name='attrs-jsonschema',
           "path": base
       },
       description=(
-          "a utility library to help provide api route "
-          "generation form function signature for web "
-          "frameworks."
+          "convert a attrs annotation to json a json schema."
       ),
       long_description=open(README_PATH).read(),
       author='Yusuke Tsutsumi',
