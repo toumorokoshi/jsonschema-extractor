@@ -1,7 +1,7 @@
 import attr
 import pytest
 from attr.validators import instance_of
-from attr_jsonschema import extract_schema
+from attrs_jsonschema import extract_schema
 
 
 @attr.s

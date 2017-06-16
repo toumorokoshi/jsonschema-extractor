@@ -1,0 +1,3 @@
+[run]
+omit = attrs_jsonschema/compat.py
+       attrs_jsonschema/tests/*
