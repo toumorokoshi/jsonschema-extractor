@@ -11,6 +11,7 @@ from attr.exceptions import (
 )
 
 schema_by_type = OrderedDict()
+schema_by_type[bool] = {"type": "boolean"}
 schema_by_type[int] = {"type": "integer"}
 schema_by_type[string_type] = {"type": "string"}
 

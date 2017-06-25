@@ -7,6 +7,7 @@ from attrs_jsonschema import extract, UnextractableSchema
 @attr.s
 class Example(object):
     an_int = attr.ib(validator=instance_of(int))
+    a_bool = attr.ib(validator=instance_of(bool))
     a_string = attr.ib(validator=[
         instance_of(str)
     ], default="foo")
@@ -18,8 +19,9 @@ SCHEMA_PAIRS = [
         "properties": {
             "an_int": {"type": "integer"},
             "a_string": {"type": "string"},
+            "a_bool": {"type": "boolean"},
         },
-        "required": ["an_int"]
+        "required": ["an_int", "a_bool"]
     })
 ]
 
