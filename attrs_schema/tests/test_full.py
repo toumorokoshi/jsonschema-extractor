@@ -1,7 +1,7 @@
 import attr
 import pytest
 from attr.validators import instance_of
-from attrs_jsonschema import extract, UnextractableSchema
+from attrs_schema import extract_jsonschema, UnextractableSchema
 
 
 @attr.s
@@ -27,7 +27,7 @@ SCHEMA_PAIRS = [
 @pytest.mark.parametrize("obj,expected_schema",
                          SCHEMA_PAIRS)
 def test_extract_schema(obj, expected_schema):
-    assert extract(obj) == expected_schema
+    assert extract_jsonschema(obj) == expected_schema
 
 
 def test_non_attrs_object():
@@ -40,7 +40,7 @@ def test_non_attrs_object():
             self.x = x
 
     with pytest.raises(UnextractableSchema):
-        extract(Foo)
+        extract_jsonschema(Foo)
 
 
 def test_attribute_missing_validation():
@@ -54,4 +54,4 @@ def test_attribute_missing_validation():
         something = attr.ib()
 
     with pytest.raises(UnextractableSchema):
-        extract(Foo)
+        extract_jsonschema(Foo)

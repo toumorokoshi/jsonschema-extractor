@@ -15,7 +15,7 @@ schema_by_type[int] = {"type": "integer"}
 schema_by_type[string_type] = {"type": "string"}
 
 
-def extract(attrs_or_primitive):
+def extract_jsonschema(attrs_or_primitive):
     """
     extract a jsonschema out of a primitive, or a attr object.
     """
@@ -28,6 +28,7 @@ def extract(attrs_or_primitive):
     raise UnextractableSchema("type {0} is not an attrs or a primitive data type".format(
         attrs_or_primitive
     ))
+
 
 def extract_schema(attrs_class):
     """
@@ -55,13 +56,14 @@ class AttributeDetails(object):
     schema = attr.ib()
     is_required = attr.ib()
 
+
 def extract_attribute(attribute):
     is_required = attribute.default is attr.NOTHING
 
     schema = None
     for validator in _iterate_validator(attribute.validator):
         if isinstance(validator, _InstanceOfValidator):
-            schema = extract(validator.type)
+            schema = extract_jsonschema(validator.type)
 
     if schema is None:
         raise UnextractableSchema(
@@ -70,6 +72,7 @@ def extract_attribute(attribute):
     return AttributeDetails(
         attribute.name, schema,  is_required
     )
+
 
 def _iterate_validator(validator):
     if isinstance(validator, _AndValidator):

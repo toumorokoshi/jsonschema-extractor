@@ -17,8 +17,8 @@ def test(build):
     build.packages.install("pytest-cov")
     build.packages.install("flake8")
     build.executables.run([
-        "py.test", "--cov", "attrs_jsonschema",
-        "attrs_jsonschema/tests",
+        "py.test", "--cov", "attrs_schema",
+        "attrs_schema/tests",
         "--cov-report", "term-missing"
     ] + build.options.args)
 
