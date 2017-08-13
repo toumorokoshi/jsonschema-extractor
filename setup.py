@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import glob
 import os
 import sys
 from setuptools import setup, find_packages
@@ -13,25 +12,18 @@ base = os.path.dirname(os.path.abspath(__file__))
 
 README_PATH = os.path.join(base, "README.rst")
 
-install_requires = [
-    'attrs',
-    'schematics>=2.0.0',
-    'six',
-    'jinja2',
-    'swagger-schema>=0.4.0',
-    'pyyaml',
-]
+install_requires = ['attrs']
 
 tests_require = []
 
-setup(name='attrs-jsonschema',
+setup(name='attrs-schema',
       setup_requires=["vcver"],
       vcver={
           "is_release": is_release,
           "path": base
       },
       description=(
-          "convert a attrs annotation to json a json schema."
+          "a set of utilities to use attrs as a schema library."
       ),
       long_description=open(README_PATH).read(),
       author='Yusuke Tsutsumi',
