@@ -9,6 +9,9 @@ from attr.validators import (
 from attr.exceptions import (
     NotAnAttrsClassError
 )
+from .fields import (
+    boolean, integer, string
+)
 
 schema_by_type = OrderedDict()
 schema_by_type[bool] = {"type": "boolean"}
@@ -62,16 +65,19 @@ def extract_attribute(attribute):
     is_required = attribute.default is attr.NOTHING
 
     schema = None
-    for validator in _iterate_validator(attribute.validator):
-        if isinstance(validator, _InstanceOfValidator):
-            schema = extract_jsonschema(validator.type)
+    if "jsonschema" in attribute.metadata:
+        schema = attribute.metadata["jsonschema"]
+    else:
+        for validator in _iterate_validator(attribute.validator):
+            if isinstance(validator, _InstanceOfValidator):
+                schema = extract_jsonschema(validator.type)
 
     if schema is None:
         raise UnextractableSchema(
             "all attributes must have an 'InstanceOfValidator'. attribute {0} does not.".format(attribute)
         )
     return AttributeDetails(
-        attribute.name, schema,  is_required
+        attribute.name, schema, is_required
     )
 
 

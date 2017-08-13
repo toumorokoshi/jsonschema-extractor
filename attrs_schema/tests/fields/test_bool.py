@@ -1,9 +1,9 @@
 import pytest
-from attrs_schema.fields import Bool
+from attrs_schema import boolean
 
 
 def test_bool_metadata():
-    assert Bool.metadata["jsonschema"] == {
+    boolean().metadata["jsonschema"] == {
         "type": "boolean"
     }
 
@@ -18,4 +18,5 @@ def test_bool_metadata():
     (object(), True),
 ])
 def test_bool_validation(inp, result):
-    assert Bool.convert(inp) is result
+    b = boolean()
+    assert b.convert(inp) is result

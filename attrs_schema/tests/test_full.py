@@ -1,4 +1,5 @@
 import attr
+import attrs_schema
 import pytest
 from attr.validators import instance_of
 from attrs_schema import extract_jsonschema, UnextractableSchema
@@ -6,11 +7,11 @@ from attrs_schema import extract_jsonschema, UnextractableSchema
 
 @attr.s
 class Example(object):
-    an_int = attr.ib(validator=instance_of(int))
-    a_bool = attr.ib(validator=instance_of(bool))
-    a_string = attr.ib(validator=[
-        instance_of(str)
-    ], default="foo")
+    an_int = attrs_schema.integer()
+    a_bool = attrs_schema.boolean()
+    a_string = attrs_schema.string(
+        default="foo"
+    )
 
 SCHEMA_PAIRS = [
     (Example, {

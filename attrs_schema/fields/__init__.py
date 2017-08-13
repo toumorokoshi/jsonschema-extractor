@@ -1,1 +1,3 @@
-from .bool import Bool
+from .boolean import boolean
+from .integer import integer
+from .string import string
