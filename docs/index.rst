@@ -18,3 +18,14 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+Attrs Schema is an extension of attrs, providing predefined attr.ib objects with:
+
+- friendly converters
+- json-schema definitions
+
+
+-------
+Example
+-------
