@@ -22,7 +22,7 @@ if sys.version_info < (3, 0):
 
 tests_require = []
 
-setup(name='attrs-schema',
+setup(name='jsonschema-extractor',
       setup_requires=["vcver"],
       vcver={
           "is_release": is_release,

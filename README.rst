@@ -1,5 +1,9 @@
-================
-attrs-jsonschema
-================
+====================
+jsonschema-extractor
+====================
 
-From an attrs class, return back a jsonschema object.
+jsonschema-extractor can extract jsonschema definitions from a variety
+of different serialization frameworks:
+
+- `cattrs <https://cattrs.readthedocs.io/>`_
+- `schematics <http://schematics.readthedocs.io/>`_

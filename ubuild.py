@@ -1,8 +1,5 @@
 import os
-import shutil
-import subprocess
 import uranium
-from uranium.rules import rule, Once
 
 
 def main(build):
@@ -18,7 +15,7 @@ def test(build):
     build.packages.install("flake8")
     build.executables.run([
         "py.test", "--cov", "attrs_schema",
-        "attrs_schema/tests",
+        "jsonschema_extractor/tests",
         "--cov-report", "term-missing"
     ] + build.options.args)
 
@@ -33,7 +30,6 @@ def publish(build):
 
 
 def build_docs(build):
-    changelog(build)
     build.packages.install("Babel")
     build.packages.install("Sphinx")
     build.packages.install("sphinx_rtd_theme")
