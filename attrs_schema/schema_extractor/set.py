@@ -18,4 +18,4 @@ class SchemaExtractorSet(object):
 
     def extract(self, typ):
         """ extract a schema from an object """
-        self[typ].extract(self, typ)
+        return self[typ].extract(self, typ)

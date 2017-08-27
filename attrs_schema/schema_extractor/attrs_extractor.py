@@ -2,6 +2,11 @@ import attr
 from attr.exceptions import (
     NotAnAttrsClassError
 )
+from ..exceptions import UnextractableSchema
+from attr.validators import (
+    _InstanceOfValidator, _OptionalValidator,
+    _AndValidator
+)
 
 class AttrsExtractor(object):
 
@@ -14,19 +19,19 @@ class AttrsExtractor(object):
             return False
 
     @classmethod
-    def extract(cls, extractor, obj):
+    def extract(cls, extractor, typ):
         """
         take an attrs based class, and convert it
         to jsonschema.
         """
         schema = {
-            "title": attrs_class.__name__,
+            "title": typ.__name__,
             "type": "object",
             "properties": {},
             "required": []
         }
-        for attribute in attr.fields(attrs_class):
-            details = extract_attribute(attribute)
+        for attribute in attr.fields(typ):
+            details = cls._extract_attribute(extractor, attribute)
             if details.is_required:
                 schema["required"].append(details.name)
             schema["properties"][details.name] = details.schema
@@ -51,3 +56,16 @@ class AttrsExtractor(object):
         return AttributeDetails(
             attribute.name, schema, is_required
         )
+
+@attr.s
+class AttributeDetails(object):
+    name = attr.ib()
+    schema = attr.ib()
+    is_required = attr.ib()
+
+def _iterate_validator(validator):
+    if isinstance(validator, _AndValidator):
+        for sub_validator in validator._validators:
+            yield sub_validator
+    else:
+        yield validator

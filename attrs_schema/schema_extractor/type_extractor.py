@@ -1,27 +1,33 @@
 from datetime import datetime
+from ..compat import string_type
+from cattr.vendor.typing import (
+    Any, List, Sequence
+)
 
 class TypeExtractor(object):
 
     def __init__(self):
-        self._type_extractor = singledispatch(self._extract_fallback)
-        self._extract.register(Any, self._extract_fallback)
-        self._extract.register(List, self._extract_seq)
-        self._extract.register(Sequence, self._extract_seq)
-        self._extract.register(bool, self._extract_bool)
-        self._extract.register(int, self._extract_int)
-        self._extract.register(float, self._extract_float)
-        self._extract.register(string_type, self._extract_string)
-        self._extract.register(datetime, self._extract_datetime)
-        self._extract.register(type(None), self._extract_null)
+        self._extractor_list = []
+        # self._extractor_list.append((List, _extract_seq))
+        # self._extractor_list.append((Sequence, _extract_seq))
+        self._extractor_list.append((bool, _extract_bool))
+        self._extractor_list.append((int, _extract_int))
+        self._extractor_list.append((float, _extract_float))
+        self._extractor_list.append((string_type, _extract_string))
+        self._extractor_list.append((datetime, _extract_datetime))
+        self._extractor_list.append((type(None), _extract_null))
 
+    @staticmethod
     def can_handle(typ):
         return True
 
-    @staticmethod
-    def extract(extractor, obj):
-        return self._extract(extractor, obj)
+    def extract(self, extractor, typ):
+        for t, extractor in self._extractor_list:
+            if issubclass(typ, t):
+                return extractor(typ)
+        return _extract_fallback(extractor, typ)
 
-    def register(typ, handler):
+    def register(self, typ, handler):
         """
         if you need to add additional types, you
         can do so with this API.
@@ -32,7 +38,7 @@ class TypeExtractor(object):
 def _extract_fallback(extractor, typ):
     return {"type": "object"}
 
-def _extract_seq(extractor, seq):
+def _extract_seq(seq, extractor):
     """Convert a sequence to primitive equivalents."""
     subtype = Any
     if seq.__args__ and seq.__args__[0] is not Any:

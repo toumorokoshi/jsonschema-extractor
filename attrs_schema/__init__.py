@@ -6,7 +6,7 @@ from attr.validators import (
     _InstanceOfValidator, _OptionalValidator,
     _AndValidator
 )
-from schema_extractor import DEFAULT_EXTRACTOR
+from .schema_extractor import DEFAULT_EXTRACTOR
 from .fields import (
     boolean, integer, string
 )

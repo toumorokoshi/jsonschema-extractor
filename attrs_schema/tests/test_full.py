@@ -33,19 +33,6 @@ def test_extract_schema(obj, expected_schema):
     assert extract_jsonschema(obj) == expected_schema
 
 
-def test_non_attrs_object():
-    """
-    non-attrs objects should raise an exception
-    when attempted to be extracted.
-    """
-    class Foo(object):
-        def __init__(self, x):
-            self.x = x
-
-    with pytest.raises(UnextractableSchema):
-        extract_jsonschema(Foo)
-
-
 def test_attribute_missing_validation():
     """
     non-attrs objects should raise an exception
