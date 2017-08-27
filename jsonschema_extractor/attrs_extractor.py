@@ -2,7 +2,7 @@ import attr
 from attr.exceptions import (
     NotAnAttrsClassError
 )
-from ..exceptions import UnextractableSchema
+from .exceptions import UnextractableSchema
 from attr.validators import (
     _InstanceOfValidator, _OptionalValidator,
     _AndValidator

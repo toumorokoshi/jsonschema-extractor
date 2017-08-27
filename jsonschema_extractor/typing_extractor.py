@@ -1,10 +1,11 @@
 from datetime import datetime
-from ..compat import string_type
+from .compat import string_type
 from cattr.vendor.typing import (
     Any, List, Sequence
 )
 
-class TypeExtractor(object):
+
+class TypingExtractor(object):
 
     def __init__(self):
         self._extractor_list = []
@@ -24,7 +25,7 @@ class TypeExtractor(object):
     def extract(self, extractor, typ):
         for t, extractor in self._extractor_list:
             if issubclass(typ, t):
-                return extractor(typ)
+                return extractor(extractor, typ)
         return _extract_fallback(extractor, typ)
 
     def register(self, typ, handler):
@@ -38,6 +39,7 @@ class TypeExtractor(object):
 def _extract_fallback(extractor, typ):
     return {"type": "object"}
 
+
 def _extract_seq(seq, extractor):
     """Convert a sequence to primitive equivalents."""
     subtype = Any
@@ -48,20 +50,26 @@ def _extract_seq(seq, extractor):
         "items": extractor.extract(subtype)
     }
 
+
 def _extract_int(extractor, typ):
-    return {"type": "number"}
+    return {"type": "integer"}
+
 
 def _extract_float(extractor, typ):
     return {"type": "number"}
 
+
 def _extract_string(extractor, typ):
     return {"type": "string"}
+
 
 def _extract_bool(extractor, typ):
     return {"type": "boolean"}
 
+
 def _extract_null(extractor, typ):
     return {"type": "null"}
+
 
 def _extract_datetime(extractor, typ):
     return {"type": "string", "format": "datetime"}

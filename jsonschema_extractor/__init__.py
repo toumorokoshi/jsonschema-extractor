@@ -1,15 +1,12 @@
-import attr
-from .compat import string_type
-from .exceptions import UnextractableSchema
-from collections import OrderedDict
-from attr.validators import (
-    _InstanceOfValidator, _OptionalValidator,
-    _AndValidator
-)
-from .schema_extractor import DEFAULT_EXTRACTOR
-from .fields import (
-    boolean, integer, string
-)
+from .extractor_set import SchemaExtractorSet
+from .attrs_extractor import AttrsExtractor
+from .typing_extractor import TypingExtractor
+
+DEFAULT_EXTRACTOR = SchemaExtractorSet([
+    AttrsExtractor(),
+    TypingExtractor()
+])
+
 
 def extract_jsonschema(typ):
     return DEFAULT_EXTRACTOR.extract(typ)
