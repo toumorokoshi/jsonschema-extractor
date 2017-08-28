@@ -20,6 +20,9 @@ if sys.version_info < (3, 0):
         "functools32",
     ]
 
+if sys.version_info < (3, 5):
+    install_requires.append("typing")
+
 tests_require = []
 
 setup(name='jsonschema-extractor',

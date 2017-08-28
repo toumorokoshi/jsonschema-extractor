@@ -1,11 +1,14 @@
 from .extractor_set import SchemaExtractorSet
 
 from .typing_extractor import TypingExtractor
-from .attrs_extractor import AttrsExtractor
 DEFAULT_EXTRACTOR_LIST = [
-    AttrsExtractor(),
     TypingExtractor()
 ]
+try:
+    from .attrs_extractor import AttrsExtractor
+    AttrsExtractor()
+except ImportError:
+    pass
 # if schematics exists, then we import this
 try:
     from .schematics_extractor import SchematicsExtractor

@@ -1,6 +1,6 @@
 from datetime import datetime
 from .compat import string_type
-from cattr._compat import (
+from typing import (
     Any, List, Sequence
 )
 
