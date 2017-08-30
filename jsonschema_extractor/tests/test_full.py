@@ -28,3 +28,10 @@ SCHEMA_PAIRS = [
                          SCHEMA_PAIRS)
 def test_extract_schema(obj, expected_schema):
     assert extract_jsonschema(obj) == expected_schema
+
+
+def test_extractor_regular_class(extractor):
+    class Foo(object):
+        pass
+
+    extractor.extract(Foo) == {"type": "object"}

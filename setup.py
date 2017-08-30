@@ -12,6 +12,8 @@ base = os.path.dirname(os.path.abspath(__file__))
 
 README_PATH = os.path.join(base, "README.rst")
 
+install_requires = []
+
 if sys.version_info < (3, 5):
     install_requires.append("typing")
 
@@ -24,7 +26,7 @@ setup(name='jsonschema-extractor',
           "path": base
       },
       description=(
-          "a set of utilities to use attrs as a schema library."
+          "a framework to extract jsonschema's from a variety of models."
       ),
       long_description=open(README_PATH).read(),
       author='Yusuke Tsutsumi',

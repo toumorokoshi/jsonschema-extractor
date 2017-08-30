@@ -23,11 +23,9 @@ class TypingExtractor(object):
         return True
 
     def extract(self, extractor, typ):
-        if isinstance(typ, list):
-            return _array_type(extractor.extract(typ[0]))
-        for t, extractor in self._extractor_list:
+        for t, t_extractor in self._extractor_list:
             if issubclass(typ, t):
-                return extractor(extractor, typ)
+                return t_extractor(extractor, typ)
         return _extract_fallback(extractor, typ)
 
     def register(self, typ, handler):
@@ -35,7 +33,7 @@ class TypingExtractor(object):
         if you need to add additional types, you
         can do so with this API.
         """
-        self._extract.register(typ, handler)
+        self._extractor_list.append((typ, handler))
 
 
 def _extract_fallback(extractor, typ):

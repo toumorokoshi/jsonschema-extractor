@@ -13,8 +13,9 @@ def test(build):
     build.packages.install("pytest-benchmark")
     build.packages.install("pytest-cov")
     build.packages.install("flake8")
+    build.packages.install("cattrs")
     build.executables.run([
-        "py.test", "--cov", "attrs_schema",
+        "py.test", "--cov", "jsonschema_extractor",
         "jsonschema_extractor/tests",
         "--cov-report", "term-missing"
     ] + build.options.args)
