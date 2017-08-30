@@ -1,7 +1,7 @@
 import attr
 import pytest
 from attr.validators import instance_of
-from jsonschema_extractor import extract_jsonschema
+from jsonschema_extractor import extract_jsonschema, extract
 
 
 @attr.s
@@ -34,4 +34,4 @@ def test_extractor_regular_class(extractor):
     class Foo(object):
         pass
 
-    extractor.extract(Foo) == {"type": "object"}
+    extract(Foo) == {"type": "object"}
