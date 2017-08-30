@@ -22,3 +22,6 @@ def init_default_extractor():
 
 DEFAULT_EXTRACTOR = init_default_extractor()
 from .exceptions import UnextractableSchema
+
+def extract(cls):
+    return DEFAULT_EXTRACTOR.extract(cls)
