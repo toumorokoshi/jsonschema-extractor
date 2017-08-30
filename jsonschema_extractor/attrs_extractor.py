@@ -12,11 +12,7 @@ class AttrsExtractor(object):
 
     @staticmethod
     def can_handle(typ):
-        try:
-            attr.fields(typ)
-            return True
-        except NotAnAttrsClassError:
-            return False
+        return getattr(typ, "__attrs_attrs__", None) is not None
 
     @classmethod
     def extract(cls, extractor, typ):

@@ -12,14 +12,6 @@ base = os.path.dirname(os.path.abspath(__file__))
 
 README_PATH = os.path.join(base, "README.rst")
 
-install_requires = ['attrs', 'cattrs']
-
-if sys.version_info < (3, 0):
-    install_requires += [
-        "singledispatch",
-        "functools32",
-    ]
-
 if sys.version_info < (3, 5):
     install_requires.append("typing")
 

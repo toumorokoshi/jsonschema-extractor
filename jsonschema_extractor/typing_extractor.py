@@ -23,6 +23,8 @@ class TypingExtractor(object):
         return True
 
     def extract(self, extractor, typ):
+        if isinstance(typ, list):
+            return _array_type(extractor.extract(typ[0]))
         for t, extractor in self._extractor_list:
             if issubclass(typ, t):
                 return extractor(extractor, typ)
@@ -39,15 +41,17 @@ class TypingExtractor(object):
 def _extract_fallback(extractor, typ):
     return {"type": "object"}
 
-
 def _extract_seq(extractor, seq):
     """Convert a sequence to primitive equivalents."""
     subtype = Any
     if seq.__args__ and seq.__args__[0] is not Any:
         subtype = seq.__args__[0]
+    return _array_type(extractor.extract(subtype))
+
+def _array_type(subtype_schema):
     return {
         "type": "array",
-        "items": extractor.extract(subtype)
+        "items": subtype_schema
     }
 
 
@@ -72,4 +76,4 @@ def _extract_null(extractor, typ):
 
 
 def _extract_datetime(extractor, typ):
-    return {"type": "string", "format": "datetime"}
+    return {"type": "string", "format": "date-time"}

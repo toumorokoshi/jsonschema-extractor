@@ -6,13 +6,7 @@ DEFAULT_EXTRACTOR_LIST = [
 ]
 try:
     from .attrs_extractor import AttrsExtractor
-    AttrsExtractor()
-except ImportError:
-    pass
-# if schematics exists, then we import this
-try:
-    from .schematics_extractor import SchematicsExtractor
-    DEFAULT_EXTRACTOR_LIST.insert(0, SchematicsExtractor())
+    DEFAULT_EXTRACTOR_LIST.insert(0, AttrsExtractor())
 except ImportError:
     pass
 
