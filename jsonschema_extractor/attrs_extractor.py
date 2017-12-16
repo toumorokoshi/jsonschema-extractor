@@ -8,10 +8,6 @@ from attr.validators import (
     _AndValidator
 )
 
-# copied from cattrs, to enable compatibility with
-# the typed parameter from 0.5.0
-CATTRS_TYPE_METADATA_KEY = "cattr_type_metadata"
-
 class AttrsExtractor(object):
 
     @staticmethod
@@ -44,8 +40,8 @@ class AttrsExtractor(object):
         schema = None
         if "jsonschema" in attribute.metadata:
             schema = attribute.metadata["jsonschema"]
-        elif CATTRS_TYPE_METADATA_KEY in attribute.metadata:
-            schema = extractor.extract(attribute.metadata[CATTRS_TYPE_METADATA_KEY])
+        elif attribute.type is not None:
+            schema = extractor.extract(attribute.type)
         else:
             for validator in _iterate_validator(attribute.validator):
                 if isinstance(validator, _InstanceOfValidator):
