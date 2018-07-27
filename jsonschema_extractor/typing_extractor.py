@@ -5,7 +5,7 @@ from typing import (
     Any, List, Sequence
 )
 PEP_560 = sys.version_info[:3] >= (3, 7, 0)
-if PEP_560:
+if PEP_560:  # pragma: no cover
     from typing import _GenericAlias
 
 
@@ -14,7 +14,7 @@ class TypingExtractor(object):
     def __init__(self):
         self._extractor_list = []
         self._extractor_list.append((string_type, _extract_string))
-        if PEP_560:
+        if PEP_560:  # pragma: no cover
             self._extractor_list.append((List, _extract_seq))
         self._extractor_list.append((Sequence, _extract_seq))
         self._extractor_list.append((bool, _extract_bool))
@@ -31,7 +31,7 @@ class TypingExtractor(object):
         # PEP_560 deprecates issubclass for
         # List types, for the time being
         # we'll support a specific escape hatch.
-        if PEP_560:
+        if PEP_560:  # pragma: no cover
             if isinstance(typ, _GenericAlias) and typ.__origin__ is list:
                 return _extract_seq(extractor, typ)
         for t, t_extractor in self._extractor_list:
