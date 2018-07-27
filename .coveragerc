@@ -1,6 +1,6 @@
 [run]
-omit = attrs_jsonschema/compat.py
-       attrs_jsonschema/tests/*
+omit = jsonschema_extractor/compat.py
+       jsonschema_extractor/tests/*
 
 [report]
 fail_under = 100
