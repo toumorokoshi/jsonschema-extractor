@@ -5,9 +5,12 @@ from typing import (
     Any, List, Sequence
 )
 PEP_560 = sys.version_info[:3] >= (3, 7, 0)
+PY_36 = sys.version_info[:2] >= (3, 6)
 if PEP_560:  # pragma: no cover
     from typing import _GenericAlias
-
+    # from typing import _SpecialForm
+elif PY_36:
+    from typing import _Union
 
 class TypingExtractor(object):
 
@@ -34,6 +37,12 @@ class TypingExtractor(object):
         if PEP_560:  # pragma: no cover
             if isinstance(typ, _GenericAlias) and typ.__origin__ is list:
                 return _extract_seq(extractor, typ)
+            # if isinstance(typ, _SpecialForm) and typ._name == 'Optional':
+                # return _extract_optional(extractor, typ, self._extractor_list)
+        if PY_36: # pragma: no cover
+            if isinstance(typ, _Union):
+                assert len(typ.__args__) == 2 # Optional can only have one type and None
+                return _extract_optional(extractor, typ, self._extractor_list)
         for t, t_extractor in self._extractor_list:
             if issubclass(typ, t):
                 return t_extractor(extractor, typ)
@@ -49,6 +58,17 @@ class TypingExtractor(object):
 
 def _extract_fallback(extractor, typ):
     return {"type": "object"}
+
+
+def _extract_optional(extractor, optional, extractor_list):
+    nullable_typ = optional.__args__[0]
+    type_schema = _extract_fallback(extractor, optional)
+    for t, t_extractor in extractor_list:
+        if issubclass(nullable_typ, t):
+            type_schema = t_extractor(extractor, optional)
+            break
+    type_schema["nullable"] = True
+    return type_schema
 
 
 def _extract_seq(extractor, seq):
