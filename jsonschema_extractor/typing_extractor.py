@@ -5,7 +5,7 @@ from typing import (
     Any, List, Sequence
 )
 PEP_560 = sys.version_info[:3] >= (3, 7, 0)
-PY_36 = sys.version_info[:2] >= (3, 6)
+PY_36 = sys.version_info[:2] == (3, 6)
 if PEP_560:  # pragma: no cover
     from typing import _GenericAlias
     # from typing import _SpecialForm
@@ -37,6 +37,7 @@ class TypingExtractor(object):
         if PEP_560:  # pragma: no cover
             if isinstance(typ, _GenericAlias) and typ.__origin__ is list:
                 return _extract_seq(extractor, typ)
+            # TODO: test on PY_37
             # if isinstance(typ, _SpecialForm) and typ._name == 'Optional':
                 # return _extract_optional(extractor, typ, self._extractor_list)
         if PY_36: # pragma: no cover

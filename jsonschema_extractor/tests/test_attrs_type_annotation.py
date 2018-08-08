@@ -1,8 +1,7 @@
 import attr
-import sys
 from typing import Optional
 
-PY_36 = sys.version_info[:2] >= (3, 6)
+from jsonschema_extractor.typing_extractor import PY_36
 
 @attr.s
 class Example(object):
@@ -21,8 +20,7 @@ def test_extract_cattrs(extractor):
         "title": "Example",
         "properties": {
             "string": {"type": "string"},
-            "integer": {"type": "integer"},
-            # "optional": {"type": "integer", "nullable": True}
+            "integer": {"type": "integer"}
         },
         "required": ["integer"]
     }
