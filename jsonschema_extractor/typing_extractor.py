@@ -5,11 +5,11 @@ from typing import (
     Any, List, Sequence
 )
 PEP_560 = sys.version_info[:3] >= (3, 7, 0)
-PY_36 = sys.version_info[:2] == (3, 6)
 if PEP_560:  # pragma: no cover
     from typing import _GenericAlias
     # from typing import _SpecialForm
-from typing import _Union
+else:
+    from typing import _Union
 
 class TypingExtractor(object):
 

@@ -1,17 +1,12 @@
 import attr
 from typing import Optional
 
-from jsonschema_extractor.typing_extractor import PY_36
 
 @attr.s
 class Example(object):
     integer = attr.ib(type=int)
-    string = attr.ib(type=str, default="foo")
-
-
-@attr.s
-class ExampleOptional(object):
     optional = attr.ib(type=Optional[str])
+    string = attr.ib(type=str, default="foo")
 
 
 def test_extract_cattrs(extractor):
@@ -20,18 +15,8 @@ def test_extract_cattrs(extractor):
         "title": "Example",
         "properties": {
             "string": {"type": "string"},
-            "integer": {"type": "integer"}
+            "integer": {"type": "integer"},
+            "optional": {"type": "string", "nullable": True},
         },
-        "required": ["integer"]
-    }
-
-
-def test_extract_cattrs_optional(extractor):
-    assert extractor.extract(ExampleOptional) == {
-        "type": "object",
-        "title": "ExampleOptional",
-        "properties": {
-            "optional": {"type": "string", "nullable": True}
-        },
-        "required": ["optional"]
+        "required": ["integer", "optional"]
     }
