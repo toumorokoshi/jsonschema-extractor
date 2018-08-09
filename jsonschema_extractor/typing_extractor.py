@@ -9,8 +9,7 @@ PY_36 = sys.version_info[:2] == (3, 6)
 if PEP_560:  # pragma: no cover
     from typing import _GenericAlias
     # from typing import _SpecialForm
-elif PY_36:
-    from typing import _Union
+from typing import _Union
 
 class TypingExtractor(object):
 
@@ -40,10 +39,9 @@ class TypingExtractor(object):
             # TODO: test on PY_37
             # if isinstance(typ, _SpecialForm) and typ._name == 'Optional':
                 # return _extract_optional(extractor, typ, self._extractor_list)
-        if PY_36: # pragma: no cover
-            if isinstance(typ, _Union):
-                assert len(typ.__args__) == 2 # Optional can only have one type and None
-                return _extract_optional(extractor, typ, self._extractor_list)
+        if isinstance(typ, _Union):
+            assert len(typ.__args__) == 2 # Optional can only have one type and None
+            return _extract_optional(extractor, typ, self._extractor_list)
         for t, t_extractor in self._extractor_list:
             if issubclass(typ, t):
                 return t_extractor(extractor, typ)

@@ -27,8 +27,6 @@ def test_extract_cattrs(extractor):
 
 
 def test_extract_cattrs_optional(extractor):
-    if not PY_36:
-        return
     assert extractor.extract(ExampleOptional) == {
         "type": "object",
         "title": "ExampleOptional",
