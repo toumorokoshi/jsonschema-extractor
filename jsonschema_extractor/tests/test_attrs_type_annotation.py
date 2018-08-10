@@ -16,7 +16,12 @@ def test_extract_cattrs(extractor):
         "properties": {
             "string": {"type": "string"},
             "integer": {"type": "integer"},
-            "optional": {"type": "string", "nullable": True},
+            "optional": {"anyOf":
+                [
+                    {"type": "string"},
+                    {"type": "null"}
+                ]
+            }
         },
         "required": ["integer", "optional"]
     }

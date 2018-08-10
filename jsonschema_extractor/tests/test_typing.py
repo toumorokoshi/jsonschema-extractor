@@ -16,7 +16,18 @@ def typing_extractor():
     (str, {"type": "string"}),
     (type(None), {"type": "null"}),
     (datetime, {"type": "string", "format": "date-time"}),
-    (Optional[int], {"type": "integer", "nullable": True}),
+    (Optional[int], {
+        "anyOf": [
+            {"type": "integer"},
+            {"type": "null"},
+        ]
+    }),
+    (Union[int, str], {
+        "anyOf": [
+            {"type": "integer"},
+            {"type": "string"},
+        ]
+    }),
     (List[int], {
         "type": "array",
         "items": {

@@ -16,7 +16,7 @@ class TypingExtractor(object):
     def __init__(self):
         self._extractor_list = []
         self._extractor_list.append((string_type, _extract_string))
-        self._extractor_list.append((_is_union, _extract_optional))
+        self._extractor_list.append((_is_union, _extract_union))
         self._extractor_list.append((_is_sequence, _extract_seq))
         self._extractor_list.append((bool, _extract_bool))
         self._extractor_list.append((int, _extract_int))
@@ -57,12 +57,10 @@ def _extract_fallback(extractor, typ):
     return {"type": "object"}
 
 
-def _extract_optional(extractor, optional):
-    nullable_typ = optional.__args__[0]
-    type_schema = extractor.extract(nullable_typ)
-    type_schema["nullable"] = True
-    return type_schema
-
+def _extract_union(extractor, union):
+    return {
+        "anyOf": [extractor.extract(t) for t in union.__args__]
+    }
 
 def _extract_seq(extractor, seq):
     """Convert a sequence to primitive equivalents."""
