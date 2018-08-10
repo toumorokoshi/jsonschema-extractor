@@ -6,19 +6,18 @@ from typing import (
 )
 PEP_560 = sys.version_info[:3] >= (3, 7, 0)
 if PEP_560:  # pragma: no cover
-    from typing import _GenericAlias
-    # from typing import _SpecialForm
-else:
+    from typing import _GenericAlias, Union
+else:  # pragma: no cover
     from typing import _Union
+
 
 class TypingExtractor(object):
 
     def __init__(self):
         self._extractor_list = []
         self._extractor_list.append((string_type, _extract_string))
-        if PEP_560:  # pragma: no cover
-            self._extractor_list.append((List, _extract_seq))
-        self._extractor_list.append((Sequence, _extract_seq))
+        self._extractor_list.append((_is_union, _extract_optional))
+        self._extractor_list.append((_is_sequence, _extract_seq))
         self._extractor_list.append((bool, _extract_bool))
         self._extractor_list.append((int, _extract_int))
         self._extractor_list.append((float, _extract_float))
@@ -30,20 +29,19 @@ class TypingExtractor(object):
         return True
 
     def extract(self, extractor, typ):
-        # PEP_560 deprecates issubclass for
-        # List types, for the time being
-        # we'll support a specific escape hatch.
-        if PEP_560:  # pragma: no cover
-            if isinstance(typ, _GenericAlias) and typ.__origin__ is list:
-                return _extract_seq(extractor, typ)
-            # TODO: test on PY_37
-            # if isinstance(typ, _SpecialForm) and typ._name == 'Optional':
-                # return _extract_optional(extractor, typ, self._extractor_list)
-        if isinstance(typ, _Union):
-            assert len(typ.__args__) == 2 # Optional can only have one type and None
-            return _extract_optional(extractor, typ, self._extractor_list)
         for t, t_extractor in self._extractor_list:
-            if issubclass(typ, t):
+            matches = False
+            if isinstance(t, type):
+                try:
+                    matches = issubclass(typ, t)
+                # we do not care about typeerrors,
+                # as they occur if one passes in a non-class
+                # to issubclass
+                except TypeError:
+                    pass
+            else:
+                matches = t(typ)
+            if matches:
                 return t_extractor(extractor, typ)
         return _extract_fallback(extractor, typ)
 
@@ -59,13 +57,9 @@ def _extract_fallback(extractor, typ):
     return {"type": "object"}
 
 
-def _extract_optional(extractor, optional, extractor_list):
+def _extract_optional(extractor, optional):
     nullable_typ = optional.__args__[0]
-    type_schema = _extract_fallback(extractor, optional)
-    for t, t_extractor in extractor_list:
-        if issubclass(nullable_typ, t):
-            type_schema = t_extractor(extractor, optional)
-            break
+    type_schema = extractor.extract(nullable_typ)
     type_schema["nullable"] = True
     return type_schema
 
@@ -107,3 +101,24 @@ def _extract_null(extractor, typ):
 
 def _extract_datetime(extractor, typ):
     return {"type": "string", "format": "date-time"}
+
+
+def _is_sequence(typ):
+    """
+    returns True if the type in question
+    is a Sequence[] object from the typing module.
+    """
+    # PEP_560 deprecates issubclass for
+    # List types, for the time being
+    # we'll support a specific escape hatch.
+    if PEP_560:  # pragma: no cover
+        return isinstance(typ, _GenericAlias) and typ.__origin__ is list
+    else:  # pragma: no cover
+        return issubclass(typ, Sequence)
+
+
+def _is_union(typ):
+    if PEP_560:  # pragma: no cover
+        return isinstance(typ, _GenericAlias) and typ.__origin__ is Union
+    else:  # pragma: no cover
+        return isinstance(typ, _Union)
