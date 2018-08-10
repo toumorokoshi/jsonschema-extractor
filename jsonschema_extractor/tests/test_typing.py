@@ -1,8 +1,8 @@
 import pytest
 from datetime import datetime
-from typing import Any, List, Set
+from typing import Any, List, Set, Optional, Union
 from jsonschema_extractor.typing_extractor import TypingExtractor
-from jsonschema_extractor.typing_extractor import PEP_560
+from jsonschema_extractor.typing_extractor import PEP_560, _is_union
 
 
 @pytest.fixture
@@ -16,6 +16,7 @@ def typing_extractor():
     (str, {"type": "string"}),
     (type(None), {"type": "null"}),
     (datetime, {"type": "string", "format": "date-time"}),
+    (Optional[int], {"type": "integer", "nullable": True}),
     (List[int], {
         "type": "array",
         "items": {
@@ -64,3 +65,7 @@ def test_typing_extractor_register(typing_extractor):
     assert typing_extractor.extract(typing_extractor, Foo) == {
         "type": "string",
     }
+
+
+def test_is_union():
+    assert _is_union(Optional[int])
