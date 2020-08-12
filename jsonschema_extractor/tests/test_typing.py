@@ -1,8 +1,10 @@
 import pytest
+import sys
 from datetime import datetime
 from typing import Any, List, Set, Optional, Union
 from jsonschema_extractor.typing_extractor import TypingExtractor
-from jsonschema_extractor.typing_extractor import PEP_560, _is_union
+from jsonschema_extractor.typing_extractor import _is_union
+PEP_560 = sys.version_info[:3] >= (3, 7, 0)
 
 
 @pytest.fixture
@@ -80,3 +82,11 @@ def test_typing_extractor_register(typing_extractor):
 
 def test_is_union():
     assert _is_union(Optional[int])
+
+
+def test_typing_extractor_nontype(extractor):
+    """The typing extractor shouldn't fail with a non-type passed in.
+
+    Users may want to have a custom type annotation.
+    """
+    assert extractor.extract(object()) == {"type": "object"}
