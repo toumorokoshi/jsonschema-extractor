@@ -69,3 +69,4 @@ lib_pypy
 site-packages
 pip-selfcheck.json
 .pytest_cache
+bin
