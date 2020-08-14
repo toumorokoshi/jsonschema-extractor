@@ -1,18 +1,10 @@
 import sys
 from datetime import datetime
 from .compat import string_type
-from typing import (
-    Any, List, Sequence
-)
-PEP_560 = sys.version_info[:3] >= (3, 7, 0)
-if PEP_560:  # pragma: no cover
-    from typing import _GenericAlias, Union
-else:  # pragma: no cover
-    from typing import _Union
+from typing import Any, List, Sequence, Union
 
 
 class TypingExtractor(object):
-
     def __init__(self):
         self._extractor_list = []
         self._extractor_list.append((string_type, _extract_string))
@@ -58,9 +50,8 @@ def _extract_fallback(extractor, typ):
 
 
 def _extract_union(extractor, union):
-    return {
-        "anyOf": [extractor.extract(t) for t in union.__args__]
-    }
+    return {"anyOf": [extractor.extract(t) for t in union.__args__]}
+
 
 def _extract_seq(extractor, seq):
     """Convert a sequence to primitive equivalents."""
@@ -71,10 +62,7 @@ def _extract_seq(extractor, seq):
 
 
 def _array_type(subtype_schema):
-    return {
-        "type": "array",
-        "items": subtype_schema
-    }
+    return {"type": "array", "items": subtype_schema}
 
 
 def _extract_int(extractor, typ):
@@ -109,14 +97,13 @@ def _is_sequence(typ):
     # PEP_560 deprecates issubclass for
     # List types, for the time being
     # we'll support a specific escape hatch.
-    if PEP_560:  # pragma: no cover
-        return isinstance(typ, _GenericAlias) and typ.__origin__ is list
-    else:  # pragma: no cover
-        return issubclass(typ, Sequence)
+    if hasattr(typ, "__origin__"):
+        return issubclass(typ.__origin__, Sequence)
+    return False
 
 
 def _is_union(typ):
-    if PEP_560:  # pragma: no cover
-        return isinstance(typ, _GenericAlias) and typ.__origin__ is Union
-    else:  # pragma: no cover
-        return isinstance(typ, _Union)
+    if hasattr(typ, "__origin__"):
+        return typ.__origin__ is Union
+    return False
+
