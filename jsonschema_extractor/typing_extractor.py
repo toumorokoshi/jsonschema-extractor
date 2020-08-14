@@ -99,8 +99,11 @@ def _is_sequence(typ):
     # we'll support a specific escape hatch.
     if hasattr(typ, "__origin__"):
         return issubclass(typ.__origin__, Sequence)
+    return False
 
 
 def _is_union(typ):
     if hasattr(typ, "__origin__"):
         return typ.__origin__ is Union
+    return False
+
