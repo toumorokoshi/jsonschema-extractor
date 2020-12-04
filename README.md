@@ -1,6 +1,9 @@
-====================
-jsonschema-extractor
-====================
+=============================
+jsonschema-extractor-extended
+=============================
+
+This package is an extension of [jsonschema-extractor](https://github.com/toumorokoshi/jsonschema-extractor).
+Bellow you can see the original documentation of the package.
 
 jsonschema-extractor is a library and extensible framework for
 extracting `json schema <http://json-schema.org/>`_ from various object and
