@@ -41,12 +41,12 @@ class AttrsExtractor(object):
         if "jsonschema" in attribute.metadata:
             schema = attribute.metadata["jsonschema"]
         else:
-            schema = cls._extract_attribute_schema_by_type(extractor, attribute)
+            schema = cls._extract_attribute_schema_by_type(extractor, attribute) or {}
             for validator in _iterate_validator(attribute.validator):
                 if isinstance(validator, _InValidator):
                     schema['enum'] = validator.options
 
-        if schema is None:
+        if not schema:
             raise UnextractableSchema(
                 "all attributes must have an 'InstanceOfValidator'. attribute {0} does not.".format(attribute)
             )
