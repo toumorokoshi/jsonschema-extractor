@@ -38,19 +38,13 @@ class AttrsExtractor(object):
     def _extract_attribute(cls, extractor, attribute):
         is_required = attribute.default is attr.NOTHING
 
-        schema = None
         if "jsonschema" in attribute.metadata:
             schema = attribute.metadata["jsonschema"]
-        elif attribute.type is not None:
-            schema = extractor.extract(attribute.type)
         else:
+            schema = cls._extract_attribute_schema_by_type(extractor, attribute)
             for validator in _iterate_validator(attribute.validator):
-                if isinstance(validator, _InstanceOfValidator):
-                    schema = extractor.extract(validator.type)
-
-        for validator in _iterate_validator(attribute.validator):
-            if isinstance(validator, _InValidator):
-                schema['enum'] = validator.options
+                if isinstance(validator, _InValidator):
+                    schema['enum'] = validator.options
 
         if schema is None:
             raise UnextractableSchema(
@@ -59,6 +53,17 @@ class AttrsExtractor(object):
         return AttributeDetails(
             attribute.name, schema, is_required
         )
+
+    @classmethod
+    def _extract_attribute_schema_by_type(cls, extractor, attribute):
+        schema = None
+        if attribute.type is not None:
+            schema = extractor.extract(attribute.type)
+        else:
+            for validator in _iterate_validator(attribute.validator):
+                if isinstance(validator, _InstanceOfValidator):
+                    schema = extractor.extract(validator.type)
+        return schema
 
 
 @attr.s
