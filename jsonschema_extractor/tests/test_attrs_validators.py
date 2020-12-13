@@ -10,7 +10,7 @@ class Example(object):
 
 
 def test_in_validator_happy_flow(extractor):
-    expected_schema = return_value = {
+    expected_schema = {
         'properties': {
             'options': {
                 'type': 'string',
