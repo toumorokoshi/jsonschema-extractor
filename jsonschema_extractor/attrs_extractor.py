@@ -56,6 +56,12 @@ class AttrsExtractor(object):
 
     @classmethod
     def _extract_attribute_schema_by_type(cls, extractor, attribute):
+        """
+        Extract the basic schema for the attribute based on its type.
+        The type can be supplied to two ways:
+        1. The type keyword of attr.ib
+        2. The _InstanceValidator of attr
+        """
         schema = None
         if attribute.type is not None:
             schema = extractor.extract(attribute.type)
