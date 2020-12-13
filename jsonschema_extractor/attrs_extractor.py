@@ -5,8 +5,9 @@ from attr.exceptions import (
 from .exceptions import UnextractableSchema
 from attr.validators import (
     _InstanceOfValidator, _OptionalValidator,
-    _AndValidator
+    _AndValidator, _InValidator
 )
+
 
 class AttrsExtractor(object):
 
@@ -47,6 +48,10 @@ class AttrsExtractor(object):
                 if isinstance(validator, _InstanceOfValidator):
                     schema = extractor.extract(validator.type)
 
+        for validator in _iterate_validator(attribute.validator):
+            if isinstance(validator, _InValidator):
+                schema['enum'] = validator.options
+
         if schema is None:
             raise UnextractableSchema(
                 "all attributes must have an 'InstanceOfValidator'. attribute {0} does not.".format(attribute)
@@ -55,11 +60,13 @@ class AttrsExtractor(object):
             attribute.name, schema, is_required
         )
 
+
 @attr.s
 class AttributeDetails(object):
     name = attr.ib()
     schema = attr.ib()
     is_required = attr.ib()
+
 
 def _iterate_validator(validator):
     if isinstance(validator, _AndValidator):
