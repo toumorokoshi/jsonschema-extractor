@@ -24,7 +24,13 @@ class ExampleWithBrokenSchema(object):
     options = attr.ib(validator=attr.validators.in_(POSSIBLE_OPTIONS))
 
 
-def test_in_validator_happy_flow(extractor):
+@attr.s
+class ExampleWithTuple(object):
+    options = attr.ib(type=str, validator=attr.validators.in_(set(POSSIBLE_OPTIONS)))
+
+
+@pytest.mark.parametrize('example_class', [Example, ExampleWithTuple])
+def test_in_validator_happy_flow(extractor, example_class):
     expected_schema = {
         'properties': {
             'options': {
@@ -33,11 +39,11 @@ def test_in_validator_happy_flow(extractor):
             }
         },
         'required': ['options'],
-        'title': 'Example',
+        'title': example_class.__name__,
         'type': 'object'
     }
 
-    assert expected_schema == extractor.extract(Example)
+    assert expected_schema == extractor.extract(example_class)
 
 
 def test_in_validator_without_type(extractor):
