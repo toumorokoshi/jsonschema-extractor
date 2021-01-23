@@ -48,7 +48,9 @@ class AttrsExtractor(object):
 
         if not schema:
             raise UnextractableSchema(
-                "all attributes must have an 'InstanceOfValidator'. attribute {0} does not.".format(attribute)
+                "all attributes must have an 'InstanceOfValidator' or 'InValidator'. attribute {0} does not.".format(
+                    attribute
+                )
             )
         return AttributeDetails(
             attribute.name, schema, is_required

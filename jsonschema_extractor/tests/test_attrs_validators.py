@@ -1,6 +1,10 @@
 import attr
 from typing import Optional
 
+import pytest
+
+from jsonschema_extractor import UnextractableSchema
+
 POSSIBLE_OPTIONS = ['option1', 'option2']
 
 
@@ -11,6 +15,12 @@ class Example(object):
 
 @attr.s
 class ExampleWithoutType(object):
+    options = attr.ib(validator=attr.validators.in_(POSSIBLE_OPTIONS))
+
+
+@attr.s
+class ExampleWithBrokenSchema(object):
+    foo = attr.ib()
     options = attr.ib(validator=attr.validators.in_(POSSIBLE_OPTIONS))
 
 
@@ -43,3 +53,8 @@ def test_in_validator_without_type(extractor):
     }
 
     assert expected_schema == extractor.extract(ExampleWithoutType)
+
+
+def test_in_validator_with_broken_schema(extractor):
+    with pytest.raises(UnextractableSchema):
+        assert extractor.extract(ExampleWithBrokenSchema)
