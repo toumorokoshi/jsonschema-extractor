@@ -1,5 +1,4 @@
 from enum import Enum, EnumMeta
-from typing import List
 
 import attr
 from attr.validators import (
@@ -95,7 +94,7 @@ def _iterate_validator(validator):
         yield validator
 
 
-def _enum_to_values(enum_type: Enum) -> List[any]:
+def _enum_to_values(enum_type):
     """
     Convert an Enum into a list of values
     """
