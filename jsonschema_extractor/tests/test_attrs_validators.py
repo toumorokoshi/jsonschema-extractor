@@ -1,11 +1,16 @@
-import attr
-from typing import Optional
+from enum import Enum
 
+import attr
 import pytest
 
 from jsonschema_extractor import UnextractableSchema
 
 POSSIBLE_OPTIONS = ['option1', 'option2']
+
+
+class Options(Enum):
+    option1 = POSSIBLE_OPTIONS[0]
+    option2 = POSSIBLE_OPTIONS[1]
 
 
 @attr.s
@@ -29,7 +34,12 @@ class ExampleWithTuple(object):
     options = attr.ib(type=str, validator=attr.validators.in_(set(POSSIBLE_OPTIONS)))
 
 
-@pytest.mark.parametrize('example_class', [Example, ExampleWithTuple])
+@attr.s
+class ExampleWithEnum(object):
+    options = attr.ib(type=str, validator=attr.validators.in_(Options))
+
+
+@pytest.mark.parametrize('example_class', [Example, ExampleWithTuple, ExampleWithEnum])
 def test_in_validator_happy_flow(extractor, example_class):
     expected_schema = {
         'properties': {

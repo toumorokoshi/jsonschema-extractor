@@ -1,12 +1,12 @@
+from enum import Enum, EnumMeta
+from typing import List
+
 import attr
-from attr.exceptions import (
-    NotAnAttrsClassError
-)
-from .exceptions import UnextractableSchema
 from attr.validators import (
-    _InstanceOfValidator, _OptionalValidator,
-    _AndValidator, _InValidator
+    _InstanceOfValidator, _AndValidator, _InValidator
 )
+
+from .exceptions import UnextractableSchema
 
 
 class AttrsExtractor(object):
@@ -44,8 +44,13 @@ class AttrsExtractor(object):
             schema = cls._extract_attribute_schema_by_type(extractor, attribute) or {}
             for validator in _iterate_validator(attribute.validator):
                 if isinstance(validator, _InValidator):
+                    if isinstance(validator.options, (EnumMeta, Enum)):
+                        options = _enum_to_values(validator.options)
+                    else:
+                        options = validator.options
+
                     # Sorting the list for constituency
-                    schema['enum'] = sorted(list(validator.options))
+                    schema['enum'] = sorted(list(options))
 
         if not schema:
             raise UnextractableSchema(
@@ -88,3 +93,10 @@ def _iterate_validator(validator):
             yield sub_validator
     else:
         yield validator
+
+
+def _enum_to_values(enum_type: Enum) -> List[any]:
+    """
+    Convert an Enum into a list of values
+    """
+    return [enum_attribute.value for enum_attribute in list(enum_type)]
