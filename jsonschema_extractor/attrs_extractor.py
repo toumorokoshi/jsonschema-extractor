@@ -44,7 +44,8 @@ class AttrsExtractor(object):
             schema = cls._extract_attribute_schema_by_type(extractor, attribute) or {}
             for validator in _iterate_validator(attribute.validator):
                 if isinstance(validator, _InValidator):
-                    schema['enum'] = list(validator.options)
+                    # Sorting the list for constituency
+                    schema['enum'] = sorted(list(validator.options))
 
         if not schema:
             raise UnextractableSchema(
