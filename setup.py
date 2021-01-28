@@ -14,6 +14,9 @@ README_PATH = os.path.join(base, "README.rst")
 
 install_requires = []
 
+if sys.version_info < (3, 4):
+    install_requires.append("enum34")
+
 if sys.version_info < (3, 5):
     install_requires.append("typing")
 
@@ -49,4 +52,4 @@ setup(name='jsonschema-extractor',
           'Programming Language :: Python :: 3.5',
       ],
       tests_require=tests_require
-)
+      )
