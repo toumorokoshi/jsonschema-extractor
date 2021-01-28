@@ -1,15 +1,12 @@
 from enum import Enum, EnumMeta
 
 import attr
-from attr.validators import (
-    _InstanceOfValidator, _AndValidator, _InValidator
-)
+from attr.validators import _InstanceOfValidator, _AndValidator, _InValidator
 
 from .exceptions import UnextractableSchema
 
 
 class AttrsExtractor(object):
-
     @staticmethod
     def can_handle(typ):
         return getattr(typ, "__attrs_attrs__", None) is not None
@@ -24,7 +21,7 @@ class AttrsExtractor(object):
             "title": typ.__name__,
             "type": "object",
             "properties": {},
-            "required": []
+            "required": [],
         }
         for attribute in attr.fields(typ):
             details = cls._extract_attribute(extractor, attribute)
@@ -40,16 +37,7 @@ class AttrsExtractor(object):
         if "jsonschema" in attribute.metadata:
             schema = attribute.metadata["jsonschema"]
         else:
-            schema = cls._extract_attribute_schema_by_type(extractor, attribute) or {}
-            for validator in _iterate_validator(attribute.validator):
-                if isinstance(validator, _InValidator):
-                    if isinstance(validator.options, (EnumMeta, Enum)):
-                        options = _enum_to_values(validator.options)
-                    else:
-                        options = validator.options
-
-                    # Sorting the list for constituency
-                    schema['enum'] = sorted(list(options))
+            schema = cls._extract_attribute_schema_by_type(extractor, attribute)
 
         if not schema:
             raise UnextractableSchema(
@@ -57,9 +45,7 @@ class AttrsExtractor(object):
                     attribute
                 )
             )
-        return AttributeDetails(
-            attribute.name, schema, is_required
-        )
+        return AttributeDetails(attribute.name, schema, is_required)
 
     @classmethod
     def _extract_attribute_schema_by_type(cls, extractor, attribute):
@@ -70,12 +56,26 @@ class AttrsExtractor(object):
         2. The _InstanceValidator of attr
         """
         schema = None
+        enum_values = None
         if attribute.type is not None:
             schema = extractor.extract(attribute.type)
-        else:
-            for validator in _iterate_validator(attribute.validator):
-                if isinstance(validator, _InstanceOfValidator):
-                    schema = extractor.extract(validator.type)
+
+        for validator in _iterate_validator(attribute.validator):
+            if schema is None and isinstance(validator, _InstanceOfValidator):
+                schema = extractor.extract(validator.type)
+            if isinstance(validator, _InValidator):
+                if isinstance(validator.options, (EnumMeta, Enum)):
+                    options = _enum_to_values(validator.options)
+                else:
+                    options = validator.options
+
+                # Sorting the list for consistency
+                enum_values = sorted(list(options))
+
+        if enum_values is not None:
+            schema = schema or {}
+            schema["enum"] = enum_values
+
         return schema
 
 
@@ -98,4 +98,4 @@ def _enum_to_values(enum_type):
     """
     Convert an Enum into a list of values
     """
-    return [enum_attribute.value for enum_attribute in list(enum_type)]
+    return [enum_attribute.value for enum_attribute in enum_type]
