@@ -6,6 +6,9 @@ jsonschema-extractor is a library and extensible framework for
 extracting `json schema <http://json-schema.org/>`_ from various object and
 primitives.
 
+.. image:: https://travis-ci.org/toumorokoshi/jsonschema-extractor.svg?branch=master
+   :alt: travis-ci build status
+
 Out of the box support exists for:
 
 - `attrs <https://attrs.readthedocs.io/>`_
