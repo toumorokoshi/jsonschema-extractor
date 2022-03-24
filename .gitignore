@@ -59,7 +59,6 @@ bin/
 include/
 .uranium
 .pydistutils.cfg
-# we download swagger on build
 VERSION
 templates/
 gitchangelog.rc.reference
@@ -70,3 +69,4 @@ site-packages
 pip-selfcheck.json
 .pytest_cache
 bin
+_version.py

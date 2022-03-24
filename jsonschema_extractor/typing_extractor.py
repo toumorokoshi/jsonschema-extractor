@@ -106,4 +106,3 @@ def _is_union(typ):
     if hasattr(typ, "__origin__"):
         return typ.__origin__ is Union
     return False
-
