@@ -10,22 +10,25 @@ class Example(object):
     a_bool = attr.ib(validator=instance_of(bool))
     a_string = attr.ib(validator=instance_of(str), default="foo")
 
+
 SCHEMA_PAIRS = [
-    (Example, {
-        "title": "Example",
-        "type": "object",
-        "properties": {
-            "an_int": {"type": "integer"},
-            "a_string": {"type": "string"},
-            "a_bool": {"type": "boolean"},
+    (
+        Example,
+        {
+            "title": "Example",
+            "type": "object",
+            "properties": {
+                "an_int": {"type": "integer"},
+                "a_string": {"type": "string"},
+                "a_bool": {"type": "boolean"},
+            },
+            "required": ["an_int", "a_bool"],
         },
-        "required": ["an_int", "a_bool"]
-    })
+    )
 ]
 
 
-@pytest.mark.parametrize("obj,expected_schema",
-                         SCHEMA_PAIRS)
+@pytest.mark.parametrize("obj,expected_schema", SCHEMA_PAIRS)
 def test_extract_schema(obj, expected_schema):
     assert extract_jsonschema(obj) == expected_schema
 
