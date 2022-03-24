@@ -6,35 +6,43 @@ from typing import Any, List, Sequence, Union
 
 class TypingExtractor(object):
     def __init__(self):
-        self._extractor_list = []
-        self._extractor_list.append((string_type, _extract_string))
-        self._extractor_list.append((_is_union, _extract_union))
-        self._extractor_list.append((_is_sequence, _extract_seq))
-        self._extractor_list.append((bool, _extract_bool))
-        self._extractor_list.append((int, _extract_int))
-        self._extractor_list.append((float, _extract_float))
-        self._extractor_list.append((datetime, _extract_datetime))
-        self._extractor_list.append((type(None), _extract_null))
+        # extractor_list is a function-based
+        # extractor type, designed to handle
+        # non-discrete types like Unions or
+        # sequences.
+        self._extractor_list = [
+            (_is_union, _extract_union),
+            (_is_sequence, _extract_seq),
+        ]
+        # extractor by type exists to handle specific
+        # types. A dict is used as a list-based approach
+        # may choose a match that is higher in the list, but
+        # incorrect as there is a more specific type that could
+        # be matched.
+        self._extractor_by_type = {
+            bool: _extract_bool,
+            datetime: _extract_datetime,
+            list: _extract_seq,
+            int: _extract_int,
+            float: _extract_float,
+            string_type: _extract_string,
+            type(None): _extract_null,
+        }
 
     @staticmethod
     def can_handle(typ):
         return True
 
     def extract(self, extractor, typ):
-        for t, t_extractor in self._extractor_list:
-            matches = False
-            if isinstance(t, type):
-                try:
-                    matches = issubclass(typ, t)
-                # we do not care about typeerrors,
-                # as they occur if one passes in a non-class
-                # to issubclass
-                except TypeError:
-                    pass
-            else:
-                matches = t(typ)
-            if matches:
-                return t_extractor(extractor, typ)
+        if isinstance(typ, type):
+            for subtype in typ.__mro__:
+                handler = self._extractor_by_type.get(subtype)
+                if handler is not None:
+                    return handler(extractor, typ)
+        else:
+            for is_type, handler in self._extractor_list:
+                if is_type(typ):
+                    return handler(extractor, typ)
         return _extract_fallback(extractor, typ)
 
     def register(self, typ, handler):
@@ -42,7 +50,10 @@ class TypingExtractor(object):
         if you need to add additional types, you
         can do so with this API.
         """
-        self._extractor_list.append((typ, handler))
+        if isinstance(type(typ), type):
+            self._extractor_by_type[typ] = handler
+        else:
+            self._extractor_list.append((typ, handler))
 
 
 def _extract_fallback(extractor, typ):

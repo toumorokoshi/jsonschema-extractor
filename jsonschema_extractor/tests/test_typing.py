@@ -93,3 +93,23 @@ def test_typing_extractor_nontype(extractor):
     Users may want to have a custom type annotation.
     """
     assert extractor.extract(object()) == {"type": "object"}
+
+
+def test_typing_extractor_int_enum(typing_extractor):
+    """A custom extractor for an IntEnum should match.
+
+    This tests case catches an issue where an IntEnum was
+    matched with the integer extractor, despite a custom type
+    being matched to it. (GitHub #9)
+    """
+    from enum import IntEnum
+
+    class Test(IntEnum):
+        A = 1
+        B = 2
+        C = 3
+
+    typing_extractor.register(
+        IntEnum, lambda extractor, typ: {"enum": [c.name for c in typ]}
+    )
+    assert typing_extractor.extract(None, Test) == {"enum": ["A", "B", "C"]}
