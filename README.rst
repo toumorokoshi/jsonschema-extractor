@@ -6,8 +6,8 @@ jsonschema-extractor is a library and extensible framework for
 extracting `json schema <http://json-schema.org/>`_ from various object and
 primitives.
 
-.. image:: https://travis-ci.org/toumorokoshi/jsonschema-extractor.svg?branch=master
-   :alt: travis-ci build status
+.. image:: https://github.com/toumorokoshi/jsonschema-extractor/actions/workflows/python-package.yaml/badge.svg
+    :target: https://github.com/toumorokoshi/jsonschema-extractor/actions/workflows/python-package.yaml
 
 Out of the box support exists for:
 
