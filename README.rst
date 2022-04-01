@@ -27,3 +27,37 @@ Usage
         "type": "array",
         "items": {"type": "integer"}
     }
+
+
+-------------
+Attrs-example
+-------------
+
+.. code-block:: python
+
+    import attr
+    from attr.validators import instance_of
+    import jsonschema_extractor
+
+    @attr.define
+    class Example(object):
+        integer: int = attr.field()
+        foo = attr.field(metadata={"jsonschema": {"type": "string", "format": "uuid"}})
+        validator_list: List[float] = attr.field()
+        string: str = attr.field(
+            default="foo",
+            metadata={"description": "This is an description."}
+        )
+
+    assert extractor.extract(Example) == {
+        "type": "object",
+        "title": "Example",
+        "properties": {
+            "string": {"description": "This is an description.", "type": "string"},
+            "integer": {"type": "integer"},
+            "validator_list": {"items": {"type": "number"}, "type": "array"},
+            "foo": {"type": "string", "format": "uuid"},
+        },
+        "required": ["integer", "foo", "validator_list"],
+    }
+

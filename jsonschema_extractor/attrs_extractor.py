@@ -60,6 +60,11 @@ class AttrsExtractor(object):
         if attribute.type is not None:
             schema = extractor.extract(attribute.type)
 
+        description = None
+
+        if "description" in attribute.metadata:
+            description = attribute.metadata["description"]
+
         for validator in _iterate_validator(attribute.validator):
             if schema is None and isinstance(validator, _InstanceOfValidator):
                 schema = extractor.extract(validator.type)
@@ -75,6 +80,9 @@ class AttrsExtractor(object):
         if enum_values is not None:
             schema = schema or {}
             schema["enum"] = enum_values
+
+        if description is not None:
+            schema["description"] = description
 
         return schema
 
