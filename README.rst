@@ -35,31 +35,29 @@ Attrs-example
 
 .. code-block:: python
 
-    from typing import Optional
-    from attr import define, field
+    import attr
+    from attr.validators import instance_of
     import jsonschema_extractor
 
-    @define
-    class MyClass:
-        fixed_attribute: str = field()
-        optional_attribute: Optional[int] = field(default=None)
+    @attr.define
+    class Example(object):
+        integer: int = attr.field()
+        foo = attr.field(metadata={"jsonschema": {"type": "string", "format": "uuid"}})
+        validator_list: List[float] = attr.field()
+        string: str = attr.field(
+            default="foo",
+            metadata={"description": "This is an description."}
+        )
 
-
-    assert jsonschema_extractor.extract(MyClass) == {
-        "title": "MyClass",
+    assert extractor.extract(Example) == {
         "type": "object",
+        "title": "Example",
         "properties": {
-            "fixed_attribute": {
-                        "type": "integer"
-                    },
-                    {
-                        "type": "null"
-                    }
-                ]
-            }
+            "string": {"description": "This is an description.", "type": "string"},
+            "integer": {"type": "integer"},
+            "validator_list": {"items": {"type": "number"}, "type": "array"},
+            "foo": {"type": "string", "format": "uuid"},
         },
-        "required": [
-            "fixed_attribute"
-        ]
+        "required": ["integer", "foo", "validator_list"],
     }
 
