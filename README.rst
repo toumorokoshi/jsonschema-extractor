@@ -27,3 +27,39 @@ Usage
         "type": "array",
         "items": {"type": "integer"}
     }
+
+
+-------------
+Attrs-example
+-------------
+
+.. code-block:: python
+
+    from typing import Optional
+    from attr import define, field
+    import jsonschema_extractor
+
+    @define
+    class MyClass:
+        fixed_attribute: str = field()
+        optional_attribute: Optional[int] = field(default=None)
+
+
+    assert jsonschema_extractor.extract(MyClass) == {
+        "title": "MyClass",
+        "type": "object",
+        "properties": {
+            "fixed_attribute": {
+                        "type": "integer"
+                    },
+                    {
+                        "type": "null"
+                    }
+                ]
+            }
+        },
+        "required": [
+            "fixed_attribute"
+        ]
+    }
+
