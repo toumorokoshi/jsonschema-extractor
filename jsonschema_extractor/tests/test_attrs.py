@@ -1,15 +1,19 @@
+from typing import List
+
 import attr
 import pytest
-from attr.validators import instance_of
 from jsonschema_extractor import UnextractableSchema
 
 
-@attr.s
+@attr.define
 class Example(object):
-    integer = attr.ib(validator=instance_of(int))
-    foo = attr.ib(metadata={"jsonschema": {"type": "string", "format": "uuid"}})
-    validator_list = attr.ib(validator=[instance_of(float)])
-    string = attr.ib(validator=instance_of(str), default="foo")
+    integer: int = attr.field()
+    foo = attr.field(metadata={"jsonschema": {"type": "string", "format": "uuid"}})
+    validator_list: List[float] = attr.field()
+    string: str = attr.field(
+        default="foo",
+        metadata={"description": "This is an description."}
+    )
 
 
 def test_extract_attrs(extractor):
@@ -17,9 +21,9 @@ def test_extract_attrs(extractor):
         "type": "object",
         "title": "Example",
         "properties": {
-            "string": {"type": "string"},
+            "string": {"description": "This is an description.", "type": "string"},
             "integer": {"type": "integer"},
-            "validator_list": {"type": "number"},
+            "validator_list": {"items": {"type": "number"}, "type": "array"},
             "foo": {"type": "string", "format": "uuid"},
         },
         "required": ["integer", "foo", "validator_list"],
