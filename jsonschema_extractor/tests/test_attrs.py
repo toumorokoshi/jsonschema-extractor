@@ -14,8 +14,7 @@ class Example(object):
     validator_list: List[float] = attr.field()
     floating_point: float = attr.field(validator=instance_of(float))
     string: str = attr.field(
-        default="foo",
-        metadata={"description": "This is an description."}
+        default="foo", metadata={"description": "This is an description."}
     )
 
 
