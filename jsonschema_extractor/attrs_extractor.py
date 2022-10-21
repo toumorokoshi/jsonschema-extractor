@@ -17,6 +17,10 @@ class AttrsExtractor(object):
         take an attrs based class, and convert it
         to jsonschema.
         """
+        # for those importing __annotations__ from future,
+        # resolve the types.
+        if hasattr(attr, "resolve_types"):
+            attr.resolve_types(typ)
         schema = {
             "title": typ.__name__,
             "type": "object",
