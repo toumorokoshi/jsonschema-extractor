@@ -19,6 +19,6 @@ lint-check: .venv/deps
 	.venv/bin/python -m black --check .
 
 test: .venv/deps
-	.venv/bin/python -m pytest jsonschema_extractor
+	.venv/bin/python -m pytest jsonschema_extractor -vv
 
 ready-pr: test lint
